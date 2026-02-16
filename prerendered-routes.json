@@ -1,0 +1,10 @@
+{
+  "routes": {
+    "/EduALerta": {},
+    "/EduALerta/alumno-qr": {},
+    "/EduALerta/alumnos": {},
+    "/EduALerta/crear-alumno": {},
+    "/EduALerta/dashboard": {},
+    "/EduALerta/lector-qr": {}
+  }
+}

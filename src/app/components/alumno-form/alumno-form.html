@@ -1,0 +1,30 @@
+<div class="form-container">
+
+  <h2>Registrar Alumno</h2>
+
+  <form class="formulario">
+
+    <input [(ngModel)]="alumno.dni" name="dni" placeholder="DNI">
+    <input [(ngModel)]="alumno.nombres" name="nombres" placeholder="Nombres">
+    <input [(ngModel)]="alumno.apellidos" name="apellidos" placeholder="Apellidos">
+    <input [(ngModel)]="alumno.grado" name="grado" placeholder="Grado">
+    <input [(ngModel)]="alumno.seccion" name="seccion" placeholder="Sección">
+
+    <button type="button" (click)="generarQR()">
+      Generar QR
+    </button>
+
+  </form>
+
+  <!-- 🔹 QR -->
+  <div class="qr-section" *ngIf="mostrarQR">
+    <h3>QR generado</h3>
+
+    <qrcode
+      [qrdata]="qrData"
+      [width]="200"
+      [errorCorrectionLevel]="'M'">
+    </qrcode>
+  </div>
+
+</div>

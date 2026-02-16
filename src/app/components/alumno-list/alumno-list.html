@@ -1,0 +1,69 @@
+<div class="alumno-container">
+
+  <!-- 🔹 ENCABEZADO -->
+  <div class="header-list">
+    <h2>Lista de Alumnos</h2>
+
+    <div class="acciones">
+      <input 
+        type="text" 
+        placeholder="Buscar por nombre o DNI..."
+        [(ngModel)]="filtro"
+        (input)="filtrarAlumnos()"
+      >
+
+      <button routerLink="/crear-alumno">
+        ➕ Nuevo Alumno
+      </button>
+    </div>
+  </div>
+
+  <!-- 🔹 CONTADOR -->
+  <p class="contador">
+    Total registrados: <strong>{{ alumnosFiltrados.length }}</strong>
+  </p>
+
+  <!-- 🔹 TABLA -->
+  <div class="tabla-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>DNI</th>
+          <th>Nombres</th>
+          <th>Apellidos</th>
+          <th>Grado</th>
+          <th>Sección</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let alumno of alumnosFiltrados">
+          <td>{{ alumno.dni }}</td>
+          <td>{{ alumno.nombres }}</td>
+          <td>{{ alumno.apellidos }}</td>
+          <td>{{ alumno.grado }}</td>
+          <td>{{ alumno.seccion }}</td>
+
+          <td>
+            <span 
+              [ngClass]="{
+                'activo': alumno.estado === 'Activo',
+                'inactivo': alumno.estado === 'Inactivo'
+              }">
+              {{ alumno.estado }}
+            </span>
+          </td>
+
+          <td class="acciones-btn">
+            <button class="ver">👁</button>
+            <button class="editar">✏</button>
+            <button class="eliminar">🗑</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

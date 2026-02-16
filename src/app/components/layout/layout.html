@@ -1,0 +1,24 @@
+<div class="layout">
+
+  <!-- 🔹 HEADER -->
+  <header class="header">
+    <button class="menu-btn" (click)="toggleMenu()">☰</button>
+    <h1>EduAlerta</h1>
+    <div class="usuario">Administrador</div>
+  </header>
+
+  <!-- 🔹 SIDEBAR -->
+  <nav class="sidebar" [class.open]="menuAbierto">
+    <a routerLink="/dashboard" (click)="toggleMenu()">🏠 Dashboard</a>
+    <a routerLink="/alumnos" (click)="toggleMenu()">📋 Alumnos</a>
+    <a routerLink="/crear-alumno" (click)="toggleMenu()">➕ Registrar</a>
+    <a routerLink="/lector-qr" (click)="toggleMenu()">📷 Lector QR</a>
+    <a routerLink="/alumno-qr" (click)="toggleMenu()">🔳 QR Generado</a>
+  </nav>
+
+  <!-- 🔹 CONTENIDO -->
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

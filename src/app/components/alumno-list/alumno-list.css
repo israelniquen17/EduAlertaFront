@@ -1,0 +1,112 @@
+.alumno-container {
+  padding: 20px;
+}
+
+/* HEADER */
+.header-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-list h2 {
+  margin: 0;
+}
+
+.acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.acciones input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 250px;
+}
+
+.acciones button {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.acciones button:hover {
+  background: #125aa0;
+}
+
+/* CONTADOR */
+.contador {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+/* TABLA */
+.tabla-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th {
+  background: #f4f4f4;
+  padding: 10px;
+  text-align: left;
+}
+
+td {
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+tr:hover {
+  background: #f9f9f9;
+}
+
+/* ESTADOS */
+.activo {
+  background: #d4edda;
+  color: #155724;
+  padding: 5px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.inactivo {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 5px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* BOTONES */
+.acciones-btn button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+.ver:hover {
+  color: #1976d2;
+}
+
+.editar:hover {
+  color: #28a745;
+}
+
+.eliminar:hover {
+  color: #dc3545;
+}

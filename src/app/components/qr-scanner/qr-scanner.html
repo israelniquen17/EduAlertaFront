@@ -1,0 +1,11 @@
+<div>
+  <h2>Escanear QR del Alumno</h2>
+
+  <zxing-scanner (scanSuccess)="onScan($event)">
+  </zxing-scanner>
+
+  <div *ngIf="alumno">
+    <p><strong>Nombre:</strong> {{ alumno.nombres }} {{ alumno.apellidos }}</p>
+    <p><strong>Grado:</strong> {{ alumno.grado }} {{ alumno.seccion }}</p>
+  </div>
+</div>

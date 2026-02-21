@@ -4,16 +4,41 @@
   <header class="header">
     <button class="menu-btn" (click)="toggleMenu()">☰</button>
     <h1>EduAlerta</h1>
-    <div class="usuario">Administrador</div>
+
+    <div class="usuario" *ngIf="usuario">
+      {{ usuario.usuario }} ({{ usuario.rol }})
+    </div>
+
+    <button (click)="cerrarSesion()" class="btn-logout">
+      Cerrar Sesión
+    </button>
   </header>
 
   <!-- 🔹 SIDEBAR -->
   <nav class="sidebar" [class.open]="menuAbierto">
-    <a routerLink="/dashboard" (click)="toggleMenu()">🏠 Dashboard</a>
-    <a routerLink="/alumnos" (click)="toggleMenu()">📋 Alumnos</a>
-    <a routerLink="/crear-alumno" (click)="toggleMenu()">➕ Registrar</a>
-    <a routerLink="/lector-qr" (click)="toggleMenu()">📷 Lector QR</a>
-    <a routerLink="/alumno-qr" (click)="toggleMenu()">🔳 QR Generado</a>
+
+    <!-- ADMIN -->
+    <a *ngIf="usuario?.rol === 'ADMIN'" 
+       routerLink="/dashboard" 
+       (click)="toggleMenu()">🏠 Dashboard</a>
+
+    <a *ngIf="usuario?.rol === 'ADMIN'" 
+       routerLink="/crear-alumno" 
+       (click)="toggleMenu()">➕ Registrar</a>
+
+    <a *ngIf="usuario?.rol === 'ADMIN'" 
+       routerLink="/alumno-qr" 
+       (click)="toggleMenu()">🔳 QR Generado</a>
+
+    <!-- ADMIN Y DOCENTE -->
+    <a *ngIf="usuario?.rol === 'ADMIN' || usuario?.rol === 'DOCENTE'" 
+       routerLink="/alumnos" 
+       (click)="toggleMenu()">📋 Alumnos</a>
+
+    <a *ngIf="usuario?.rol === 'ADMIN' || usuario?.rol === 'DOCENTE'" 
+       routerLink="/lector-qr" 
+       (click)="toggleMenu()">📷 Lector QR</a>
+
   </nav>
 
   <!-- 🔹 CONTENIDO -->

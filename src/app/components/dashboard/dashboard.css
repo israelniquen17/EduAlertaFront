@@ -118,3 +118,41 @@ th {
   margin: 0;
   color: gray;
 }
+
+.bienvenida {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f0f4ff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.btn-logout {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: #e60000;
+}
+.bienvenida {
+  background: linear-gradient(135deg, #4f8cff, #6fb1fc);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.bienvenida .sub-text {
+  font-size: 14px;
+  opacity: 0.9;
+}

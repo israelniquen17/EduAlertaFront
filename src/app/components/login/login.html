@@ -1,0 +1,57 @@
+<div class="login-container">
+
+  <div class="login-card">
+
+    <!-- 🔥 LOGO -->
+    <div class="logo-container">
+      <img src="https://i.ibb.co/5xfZhxSv/KW.png" alt="Logo EduAlerta">
+    </div>
+
+    <h2>Iniciar Sesión</h2>
+
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+
+      <!-- Usuario -->
+      <div class="form-group">
+        <label>Usuario</label>
+        <input 
+          type="text"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="Ingrese su usuario"
+          required
+          #emailInput="ngModel">
+      </div>
+
+      <!-- Contraseña -->
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input 
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="********"
+          required
+          #passwordInput="ngModel">
+      </div>
+
+      <!-- Botón -->
+      <button 
+        type="submit"
+        [disabled]="loginForm.invalid || loading">
+        
+        <span *ngIf="!loading">Ingresar</span>
+        <span *ngIf="loading">Cargando...</span>
+
+      </button>
+
+      <!-- 🔴 Mensaje de error -->
+      <div class="error-message" *ngIf="error">
+        {{ error }}
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

@@ -1,29 +1,20 @@
 <div class="alumno-container">
 
-  <!-- 🔹 ENCABEZADO -->
   <div class="header-list">
     <h2>Lista de Alumnos</h2>
 
-    <div class="acciones">
-      <input 
-        type="text" 
-        placeholder="Buscar por nombre o DNI..."
-        [(ngModel)]="filtro"
-        (input)="filtrarAlumnos()"
-      >
-
-      <button routerLink="/crear-alumno">
-        ➕ Nuevo Alumno
-      </button>
-    </div>
+    <input 
+      type="text" 
+      placeholder="Buscar por nombre o DNI..."
+      [(ngModel)]="filtro"
+      (input)="filtrarAlumnos()"
+    >
   </div>
 
-  <!-- 🔹 CONTADOR -->
   <p class="contador">
     Total registrados: <strong>{{ alumnosFiltrados.length }}</strong>
   </p>
 
-  <!-- 🔹 TABLA -->
   <div class="tabla-wrapper">
     <table>
       <thead>
@@ -40,6 +31,7 @@
 
       <tbody>
         <tr *ngFor="let alumno of alumnosFiltrados">
+
           <td>{{ alumno.dni }}</td>
           <td>{{ alumno.nombres }}</td>
           <td>{{ alumno.apellidos }}</td>
@@ -49,21 +41,71 @@
           <td>
             <span 
               [ngClass]="{
-                'activo': alumno.estado === 'Activo',
-                'inactivo': alumno.estado === 'Inactivo'
+                'activo': alumno.estado === 'ACTIVO',
+                'inactivo': alumno.estado === 'INACTIVO'
               }">
               {{ alumno.estado }}
             </span>
           </td>
 
           <td class="acciones-btn">
-            <button class="ver">👁</button>
-            <button class="editar">✏</button>
-            <button class="eliminar">🗑</button>
+
+            <button class="editar" (click)="abrirModal(alumno)">
+              ✏
+            </button>
+
+            <button class="eliminar" (click)="eliminarAlumno(alumno.id)">
+              🗑
+            </button>
+
+          </td>
+
+        </tr>
+
+        <tr *ngIf="alumnosFiltrados.length === 0">
+          <td colspan="7" class="sin-datos">
+            No hay alumnos registrados.
           </td>
         </tr>
+
       </tbody>
     </table>
   </div>
+</div>
 
+
+<!-- 🔥 MODAL DE EDICIÓN -->
+<div class="modal-backdrop" *ngIf="mostrarModal">
+
+  <div class="modal">
+
+    <h3>Editar Alumno</h3>
+
+    <label>DNI</label>
+    <input [(ngModel)]="alumnoSeleccionado!.dni">
+
+    <label>Nombres</label>
+    <input [(ngModel)]="alumnoSeleccionado!.nombres">
+
+    <label>Apellidos</label>
+    <input [(ngModel)]="alumnoSeleccionado!.apellidos">
+
+    <label>Grado</label>
+    <input [(ngModel)]="alumnoSeleccionado!.grado">
+
+    <label>Sección</label>
+    <input [(ngModel)]="alumnoSeleccionado!.seccion">
+
+    <label>Estado</label>
+    <select [(ngModel)]="alumnoSeleccionado!.estado">
+      <option value="ACTIVO">ACTIVO</option>
+      <option value="INACTIVO">INACTIVO</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="guardar" (click)="guardarCambios()">💾 Guardar</button>
+      <button class="cancelar" (click)="cerrarModal()">❌ Cancelar</button>
+    </div>
+
+  </div>
 </div>

@@ -4,27 +4,31 @@
 
   <form class="formulario">
 
-    <input [(ngModel)]="alumno.dni" name="dni" placeholder="DNI">
-    <input [(ngModel)]="alumno.nombres" name="nombres" placeholder="Nombres">
-    <input [(ngModel)]="alumno.apellidos" name="apellidos" placeholder="Apellidos">
-    <input [(ngModel)]="alumno.grado" name="grado" placeholder="Grado">
-    <input [(ngModel)]="alumno.seccion" name="seccion" placeholder="Sección">
+    <input [(ngModel)]="alumno.dni" name="dni" placeholder="DNI" required>
+    <input [(ngModel)]="alumno.nombres" name="nombres" placeholder="Nombres" required>
+    <input [(ngModel)]="alumno.apellidos" name="apellidos" placeholder="Apellidos" required>
+    <input [(ngModel)]="alumno.grado" name="grado" placeholder="Grado" required>
+    <input [(ngModel)]="alumno.seccion" name="seccion" placeholder="Sección" required>
 
-    <button type="button" (click)="generarQR()">
-      Generar QR
+    <button type="button" (click)="guardar()">
+      Guardar y Generar QR
     </button>
 
   </form>
 
-  <!-- 🔹 QR -->
-  <div class="qr-section" *ngIf="mostrarQR">
-    <h3>QR generado</h3>
+<!-- 🔹 QR -->
+<!-- 🔹 QR EN TIEMPO REAL -->
+<div class="qr-section"
+     *ngIf="alumno.dni || alumno.nombres || alumno.apellidos">
 
-    <qrcode
-      [qrdata]="qrData"
-      [width]="200"
-      [errorCorrectionLevel]="'M'">
-    </qrcode>
-  </div>
+  <h3>QR en tiempo real</h3>
+
+  <qrcode
+    [qrdata]="qrData"
+    [width]="200"
+    [errorCorrectionLevel]="'M'">
+  </qrcode>
+
+</div>
 
 </div>

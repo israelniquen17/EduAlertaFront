@@ -1,0 +1,126 @@
+/* Contenedor principal */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  padding: 20px;
+}
+
+/* Tarjeta del login */
+.login-card {
+  background: #ffffff;
+  padding: 40px 35px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Logo centrado */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.logo-container img {
+  width: 110px;
+  height: auto;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+
+/* Título */
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Grupo de formulario */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+/* Labels */
+label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Inputs */
+input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+/* Focus en inputs */
+input:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+/* Botón */
+button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1976d2;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+/* Hover botón */
+button:hover {
+  background: #125aa0;
+}
+
+/* Click botón */
+button:active {
+  transform: scale(0.98);
+}
+
+/* Animación suave */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+.login-card {
+  max-width: 450px;
+}
+.logo-container img {
+  width: 160px;      /* tamaño grande pero controlado */
+  max-width: 100%;   /* nunca rompe el contenedor */
+  height: auto;
+}
+}
+.error-message {
+  margin-top: 10px;
+  color: #d32f2f;
+  font-size: 14px;
+  text-align: center;
+}

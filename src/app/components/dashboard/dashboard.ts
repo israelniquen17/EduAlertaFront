@@ -11,14 +11,23 @@ interface AlumnoAsistencia {
   horaIngreso: string;
 }
 
+interface Usuario {
+  id: number;
+  usuario: string;
+  rol: 'ADMIN' | 'DOCENTE';
+  estado: 'ACTIVO' | 'INACTIVO';
+}
+
 @Component({
   selector: 'app-dashboard',
+  standalone: true, // 🔥 FALTABA ESTO
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
-  imports: [CommonModule, FormsModule] // Para ngModel y *ngIf
-
 })
 export class DashboardComponent implements OnInit {
+
+  usuarioLogueado!: Usuario | null;
 
   totalAlumnos: number = 450;
   presentes: number = 380;
@@ -26,17 +35,21 @@ export class DashboardComponent implements OnInit {
   tardanzas: number = 20;
 
   asistenciasHoy: AlumnoAsistencia[] = [];
-
   alertas: string[] = [];
 
-  constructor() {}
-
   ngOnInit(): void {
+    this.obtenerUsuario();
     this.cargarDatos();
   }
 
+  obtenerUsuario() {
+    const data = localStorage.getItem('user');
+    if (data) {
+      this.usuarioLogueado = JSON.parse(data);
+    }
+  }
+
   cargarDatos() {
-    // 🔹 Datos simulados (luego conectarás a tu backend)
     this.asistenciasHoy = [
       {
         dni: '12345678',
@@ -62,5 +75,5 @@ export class DashboardComponent implements OnInit {
       '2 alumnos con tardanza recurrente'
     ];
   }
-}
 
+}

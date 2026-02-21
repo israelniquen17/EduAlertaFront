@@ -1,47 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Alumno {
-  dni: string;
-  nombres: string;
-  apellidos: string;
-  grado: string;
-  seccion: string;
-  estado: string;
-}
+import { RouterModule } from '@angular/router';
+import { AlumnoService, Alumno } from '../../app/services/alumno.service';
 
 @Component({
   selector: 'app-alumno-list',
   standalone: true,
   templateUrl: './alumno-list.html',
   styleUrls: ['./alumno-list.css'],
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, RouterModule]
 })
-export class AlumnoListComponent {
+export class AlumnoListComponent implements OnInit {
 
   filtro: string = '';
+  alumnos: Alumno[] = [];
+  alumnosFiltrados: Alumno[] = [];
 
-  alumnos: Alumno[] = [
-    {
-      dni: '12345678',
-      nombres: 'Juan',
-      apellidos: 'Pérez',
-      grado: '5°',
-      seccion: 'A',
-      estado: 'Activo'
-    },
-    {
-      dni: '87654321',
-      nombres: 'María',
-      apellidos: 'López',
-      grado: '4°',
-      seccion: 'B',
-      estado: 'Activo'
-    }
-  ];
+  alumnoSeleccionado: Alumno | null = null;
+  mostrarModal: boolean = false;
 
-  alumnosFiltrados: Alumno[] = [...this.alumnos];
+  constructor(private alumnoService: AlumnoService) {}
+
+  ngOnInit(): void {
+
+    // 🔥 Se suscribe automáticamente a los cambios
+    this.alumnoService.alumnos$.subscribe(data => {
+      this.alumnos = data;
+      this.alumnosFiltrados = data;
+    });
+
+    // 🔥 Carga inicial
+    this.alumnoService.obtenerAlumnos().subscribe();
+  }
 
   filtrarAlumnos() {
     const texto = this.filtro.toLowerCase();
@@ -53,4 +44,41 @@ export class AlumnoListComponent {
     );
   }
 
+  eliminarAlumno(id?: number) {
+
+    if (!id) return;
+
+    if (!confirm('¿Seguro que deseas eliminar este alumno?')) {
+      return;
+    }
+
+    this.alumnoService.eliminarAlumno(id)
+      .subscribe(() => {
+        alert('Alumno eliminado correctamente');
+      });
+  }
+
+  abrirModal(alumno: Alumno) {
+    this.alumnoSeleccionado = { ...alumno };
+    this.mostrarModal = true;
+  }
+
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.alumnoSeleccionado = null;
+  }
+
+  guardarCambios() {
+
+    if (!this.alumnoSeleccionado?.id) return;
+
+    this.alumnoService.actualizarAlumno(
+      this.alumnoSeleccionado.id,
+      this.alumnoSeleccionado
+    ).subscribe(() => {
+
+      alert('Alumno actualizado correctamente');
+      this.cerrarModal();
+    });
+  }
 }

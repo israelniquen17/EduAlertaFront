@@ -1,1 +1,38 @@
-<p>padre works!</p>
+<div class="container">
+  <h2>Dashboard del Padre</h2>
+
+  <!-- 🔔 Notificaciones -->
+  <div class="notificaciones-header">
+    <span>🔔</span>
+    <!-- Solo mostrar badge si hay notificaciones -->
+    <span *ngIf="notificaciones.length > 0" class="badge">{{ notificaciones.length }}</span>
+    <button class="btn-small" (click)="marcarLeidas()" [disabled]="notificaciones.length === 0">
+      Marcar todas leídas
+    </button>
+  </div>
+
+  <!-- 🔹 Alumnos vinculados -->
+  <h3>Alumnos vinculados</h3>
+  <div *ngIf="alumnos.length > 0; else noAlumnos">
+    <div class="alumno-card" *ngFor="let alumno of alumnos">
+      <p><strong>{{ alumno.nombres }} {{ alumno.apellidos }}</strong></p>
+      <p>Grado: {{ alumno.grado }} | Sección: {{ alumno.seccion }}</p>
+      <p>DNI: {{ alumno.dni }}</p>
+    </div>
+  </div>
+  <ng-template #noAlumnos>
+    <p>No hay alumnos vinculados.</p>
+  </ng-template>
+
+  <!-- 🔹 Notificaciones -->
+  <h3>Notificaciones</h3>
+  <div *ngIf="notificaciones.length > 0; else noNotificaciones">
+    <div class="notificacion" *ngFor="let notif of notificaciones">
+      <p>{{ notif.mensaje }}</p>
+      <small>{{ notif.fecha }} | {{ notif.hora }}</small>
+    </div>
+  </div>
+  <ng-template #noNotificaciones>
+    <p>No hay notificaciones aún.</p>
+  </ng-template>
+</div>

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
+import { AuthService } from '../../app/services/auth.service'; // 🔹 Importa tu servicio de auth
 
 export interface Usuario {
   id: number;
@@ -29,7 +30,8 @@ export class Login {
   constructor(
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService // 🔹 Inyecta AuthService
   ) {}
 
   login() {
@@ -42,48 +44,43 @@ export class Login {
     this.error = '';
     this.loading = true;
 
-    const body = {
-      usuario: this.email,
-      password: this.password
-    };
+    const body = { usuario: this.email, password: this.password };
 
     this.http.post<Usuario>('http://localhost:8080/api/auth/login', body)
       .pipe(finalize(() => {
         this.loading = false;
-        this.cdr.detectChanges();  // fuerza actualización inmediata
+        this.cdr.detectChanges();
       }))
       .subscribe({
-        next: (response) => {
-          // Verificar si el usuario está activo
+        next: (response: any) => {
+          // Manejo de errores devueltos por el backend
+          if (response.code && response.code === 403) {
+            this.error = 'Usuario o contraseña incorrecta';
+            return;
+          }
           if (response.estado !== 'ACTIVO') {
-            this.error = 'Usuario inactivo, contacte con administración';
-            this.cdr.detectChanges();
+            this.error = 'Usuario inactivo';
             return;
           }
 
-          // Guardar usuario en localStorage
-          localStorage.setItem('user', JSON.stringify(response));
+          // 🔹 Guardar usuario en AuthService (localStorage también se actualiza ahí)
+          this.authService.setUsuario(response);
 
-          // Redirigir según rol
-          switch (response.rol) {
-            case 'ADMIN':
-              this.router.navigate(['/dashboard']);
-              break;
-            case 'DOCENTE':
-              this.router.navigate(['/docentes']);
-              break;
-            case 'PADRE':
-              this.router.navigate(['/padres']);
-              break;
-            default:
-              this.error = 'Rol no reconocido';
-              break;
+          // 🔹 Redirigir según rol
+          if (response.rol === 'PADRE') {
+            this.router.navigate(['/padres']).then(() => {
+              // 🔹 Forzar cambio de detección para que el PadreComponent lea el usuario inmediatamente
+              this.cdr.detectChanges();
+            });
+          } else if (response.rol === 'ADMIN') {
+            this.router.navigate(['/dashboard']);
+          } else if (response.rol === 'DOCENTE') {
+            this.router.navigate(['/docentes']);
+          } else {
+            this.error = 'Rol no reconocido';
           }
-
-          this.cdr.detectChanges();
         },
         error: (err) => {
-          // Manejo de errores según el status HTTP
           if (err.status === 401 || err.status === 403) {
             this.error = err.error?.mensaje || 'Usuario o contraseña incorrecta';
           } else {

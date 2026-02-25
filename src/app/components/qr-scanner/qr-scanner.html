@@ -1,27 +1,24 @@
 <div class="container">
-
   <h2>Escanear QR del Alumno</h2>
 
-  <!-- Scanner -->
-  <zxing-scanner
-    *ngIf="!escaneado"
-    (scanSuccess)="onScan($event)">
-  </zxing-scanner>
-
-  <!-- Botón reiniciar -->
-  <button *ngIf="escaneado" (click)="reiniciar()">
-    Escanear otro alumno
-  </button>
-
-  <!-- Datos del alumno -->
-  <div *ngIf="alumno" class="card">
-    <h3>Datos del Alumno</h3>
-
-    <p><strong>DNI:</strong> {{ alumno.dni }}</p>
-    <p><strong>Nombre:</strong> {{ alumno.nombres }} {{ alumno.apellidos }}</p>
-    <p><strong>Grado:</strong> {{ alumno.grado }}</p>
-    <p><strong>Sección:</strong> {{ alumno.seccion }}</p>
-    <p><strong>Estado:</strong> {{ alumno.estado }}</p>
+  <div class="scanner-wrapper" *ngIf="!escaneado">
+    <zxing-scanner (scanSuccess)="onScan($event)"></zxing-scanner>
   </div>
 
+  <button class="btn" *ngIf="escaneado" (click)="reiniciar()">Escanear otro alumno</button>
+
+  <div *ngIf="alumno" class="card">
+    <h3>Datos del Alumno</h3>
+    <div class="card-content">
+      <p><span>DNI:</span> {{ alumno.dni }}</p>
+      <p><span>Nombre:</span> {{ alumno.nombres }} {{ alumno.apellidos }}</p>
+      <p><span>Grado:</span> {{ alumno.grado }}</p>
+      <p><span>Sección:</span> {{ alumno.seccion }}</p>
+      <p><span>Estado:</span> {{ alumno.estado }}</p>
+
+      <button class="btn" (click)="alertarAsistencia()" [disabled]="alertado">
+        {{ alertado ? 'Asistencia registrada' : 'Alertar asistencia' }}
+      </button>
+    </div>
+  </div>
 </div>

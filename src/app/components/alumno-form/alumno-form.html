@@ -7,8 +7,38 @@
     <input [(ngModel)]="alumno.dni" name="dni" placeholder="DNI" required>
     <input [(ngModel)]="alumno.nombres" name="nombres" placeholder="Nombres" required>
     <input [(ngModel)]="alumno.apellidos" name="apellidos" placeholder="Apellidos" required>
-    <input [(ngModel)]="alumno.grado" name="grado" placeholder="Grado" required>
-    <input [(ngModel)]="alumno.seccion" name="seccion" placeholder="Sección" required>
+
+    <!-- 🔹 Combobox para Grado -->
+    <label>Grado:</label>
+    <select [(ngModel)]="alumno.grado" name="grado" required>
+      <option *ngFor="let g of grados" [value]="g">{{ g }}</option>
+    </select>
+
+    <!-- 🔹 Combobox para Sección -->
+    <label>Sección:</label>
+    <select [(ngModel)]="alumno.seccion" name="seccion" required>
+      <option *ngFor="let s of secciones" [value]="s">{{ s }}</option>
+    </select>
+
+    <!-- 🔹 Solo visible para admin -->
+    <div *ngIf="esAdministrador">
+
+      <label>Curso:</label>
+      <select [(ngModel)]="alumno.curso" name="curso">
+        <option *ngFor="let c of cursos" [value]="c">{{ c }}</option>
+      </select>
+
+      <label>Docente:</label>
+      <select [(ngModel)]="alumno.docente" name="docente">
+        <option *ngFor="let d of docentes" [value]="d">{{ d }}</option>
+      </select>
+
+      <label>Padre:</label>
+      <select [(ngModel)]="alumno.padre" name="padre">
+        <option *ngFor="let p of padres" [value]="p">{{ p }}</option>
+      </select>
+
+    </div>
 
     <button type="button" (click)="guardar()">
       Guardar y Generar QR
@@ -16,19 +46,18 @@
 
   </form>
 
-<!-- 🔹 QR -->
-<!-- 🔹 QR EN TIEMPO REAL -->
-<div class="qr-section"
-     *ngIf="alumno.dni || alumno.nombres || alumno.apellidos">
+  <!-- 🔹 QR EN TIEMPO REAL -->
+  <div class="qr-section"
+       *ngIf="alumno.dni || alumno.nombres || alumno.apellidos">
 
-  <h3>QR en tiempo real</h3>
+    <h3>QR en tiempo real</h3>
 
-  <qrcode
-    [qrdata]="qrData"
-    [width]="200"
-    [errorCorrectionLevel]="'M'">
-  </qrcode>
+    <qrcode
+      [qrdata]="qrData"
+      [width]="200"
+      [errorCorrectionLevel]="'M'">
+    </qrcode>
 
-</div>
+  </div>
 
 </div>

@@ -8,7 +8,7 @@ import { finalize } from 'rxjs/operators';
 export interface Usuario {
   id: number;
   usuario: string;
-  rol: 'ADMIN' | 'DOCENTE';
+  rol: 'ADMIN' | 'DOCENTE' | 'PADRE';
   estado: 'ACTIVO' | 'INACTIVO';
 }
 
@@ -29,11 +29,11 @@ export class Login {
   constructor(
     private router: Router,
     private http: HttpClient,
-    private cdr: ChangeDetectorRef   // 🔥 agregado
+    private cdr: ChangeDetectorRef
   ) {}
 
   login() {
-
+    // Validar campos
     if (!this.email || !this.password) {
       this.error = 'Complete todos los campos';
       return;
@@ -50,29 +50,46 @@ export class Login {
     this.http.post<Usuario>('http://localhost:8080/api/auth/login', body)
       .pipe(finalize(() => {
         this.loading = false;
-        this.cdr.detectChanges();  // 🔥 fuerza actualización inmediata
+        this.cdr.detectChanges();  // fuerza actualización inmediata
       }))
       .subscribe({
-       next: (response) => {
+        next: (response) => {
+          // Verificar si el usuario está activo
+          if (response.estado !== 'ACTIVO') {
+            this.error = 'Usuario inactivo, contacte con administración';
+            this.cdr.detectChanges();
+            return;
+          }
 
-  localStorage.setItem('user', JSON.stringify(response));
+          // Guardar usuario en localStorage
+          localStorage.setItem('user', JSON.stringify(response));
 
-  if (response.rol === 'ADMIN') {
-    this.router.navigate(['/dashboard']);
-  } else if (response.rol === 'DOCENTE') {
-    this.router.navigate(['/docente']);
-  }
+          // Redirigir según rol
+          switch (response.rol) {
+            case 'ADMIN':
+              this.router.navigate(['/dashboard']);
+              break;
+            case 'DOCENTE':
+              this.router.navigate(['/docentes']);
+              break;
+            case 'PADRE':
+              this.router.navigate(['/padres']);
+              break;
+            default:
+              this.error = 'Rol no reconocido';
+              break;
+          }
 
-},
+          this.cdr.detectChanges();
+        },
         error: (err) => {
-
-          if (err.status === 401) {
+          // Manejo de errores según el status HTTP
+          if (err.status === 401 || err.status === 403) {
             this.error = err.error?.mensaje || 'Usuario o contraseña incorrecta';
           } else {
             this.error = 'Error de conexión con el servidor';
           }
-
-          this.cdr.detectChanges(); // 🔥 fuerza actualización inmediata
+          this.cdr.detectChanges();
         }
       });
   }

@@ -1,11 +1,27 @@
-<div>
+<div class="container">
+
   <h2>Escanear QR del Alumno</h2>
 
-  <zxing-scanner (scanSuccess)="onScan($event)">
+  <!-- Scanner -->
+  <zxing-scanner
+    *ngIf="!escaneado"
+    (scanSuccess)="onScan($event)">
   </zxing-scanner>
 
-  <div *ngIf="alumno">
+  <!-- Botón reiniciar -->
+  <button *ngIf="escaneado" (click)="reiniciar()">
+    Escanear otro alumno
+  </button>
+
+  <!-- Datos del alumno -->
+  <div *ngIf="alumno" class="card">
+    <h3>Datos del Alumno</h3>
+
+    <p><strong>DNI:</strong> {{ alumno.dni }}</p>
     <p><strong>Nombre:</strong> {{ alumno.nombres }} {{ alumno.apellidos }}</p>
-    <p><strong>Grado:</strong> {{ alumno.grado }} {{ alumno.seccion }}</p>
+    <p><strong>Grado:</strong> {{ alumno.grado }}</p>
+    <p><strong>Sección:</strong> {{ alumno.seccion }}</p>
+    <p><strong>Estado:</strong> {{ alumno.estado }}</p>
   </div>
+
 </div>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QrScannerComponent } from './qr-scanner';
+import { CursoComponent} from './curso';
 
-describe('QrScanner', () => {
-  let component: QrScannerComponent;
-  let fixture: ComponentFixture<QrScannerComponent>;
+describe('Curso', () => {
+  let component: CursoComponent;
+  let fixture: ComponentFixture<CursoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QrScannerComponent]
+      imports: [CursoComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(QrScannerComponent);
+    fixture = TestBed.createComponent(CursoComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

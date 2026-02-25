@@ -1,0 +1,40 @@
+<div class="curso-container">
+
+  <h2>{{ modoEdicion ? 'Editar Curso' : 'Nuevo Curso' }}</h2>
+
+  <form (ngSubmit)="guardarCurso()">
+    <input type="text" placeholder="Nombre" [(ngModel)]="nuevoCurso.nombre" name="nombre" required>
+    <input type="text" placeholder="Grado" [(ngModel)]="nuevoCurso.grado" name="grado" required>
+    <input type="text" placeholder="Sección" [(ngModel)]="nuevoCurso.seccion" name="seccion" required>
+    <button type="submit">{{ modoEdicion ? 'Actualizar' : 'Agregar' }}</button>
+    <button type="button" (click)="nuevoCurso={nombre:'',grado:'',seccion:''}; modoEdicion=false">Limpiar</button>
+  </form>
+
+  <p *ngIf="mensajeError" style="color:red">{{ mensajeError }}</p>
+
+  <hr>
+
+  <h2>Lista de Cursos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Grado</th>
+        <th>Sección</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let curso of cursos">
+        <td>{{ curso.nombre }}</td>
+        <td>{{ curso.grado }}</td>
+        <td>{{ curso.seccion }}</td>
+        <td>
+          <button type="button" (click)="editarCurso(curso)">✏️ Editar</button>
+          <button type="button" (click)="eliminarCurso(curso.id)">🗑️ Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

@@ -1,1 +1,71 @@
-<p>docente works!</p>
+<div class="docente-container">
+
+  <h2>Gestión de Docentes</h2>
+
+  <form (ngSubmit)="guardarDocente()">
+
+    <input type="text" placeholder="DNI" [(ngModel)]="nuevoDocente.dni" name="dni" required>
+    <input type="text" placeholder="Nombres" [(ngModel)]="nuevoDocente.nombres" name="nombres" required>
+    <input type="text" placeholder="Apellidos" [(ngModel)]="nuevoDocente.apellidos" name="apellidos" required>
+    <input type="text" placeholder="Grado" [(ngModel)]="nuevoDocente.grado" name="grado">
+    <input type="text" placeholder="Sección" [(ngModel)]="nuevoDocente.seccion" name="seccion">
+
+    <select [(ngModel)]="cursoSeleccionadoId" name="curso">
+      <option [ngValue]="null">Seleccione un curso</option>
+      <option *ngFor="let curso of cursos" [ngValue]="curso.id">
+        {{ curso.nombre }} - {{ curso.grado }} {{ curso.seccion }}
+      </option>
+    </select>
+
+    <button type="submit">
+      {{ modoEdicion ? 'Actualizar' : 'Agregar' }}
+    </button>
+
+    <button type="button" (click)="resetFormulario()">
+      Limpiar
+    </button>
+
+  </form>
+
+  <hr>
+
+  <table *ngIf="docentes.length > 0">
+    <thead>
+      <tr>
+        <th>DNI</th>
+        <th>Nombres</th>
+        <th>Apellidos</th>
+        <th>Grado</th>
+        <th>Sección</th>
+        <th>Cursos</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let docente of docentes">
+        <td>{{ docente.dni }}</td>
+        <td>{{ docente.nombres }}</td>
+        <td>{{ docente.apellidos }}</td>
+        <td>{{ docente.grado }}</td>
+        <td>{{ docente.seccion }}</td>
+
+        <td>
+          <ul *ngIf="docente.cursos?.length">
+            <li *ngFor="let curso of docente.cursos">
+              {{ curso.nombre }} - {{ curso.grado }} {{ curso.seccion }}
+            </li>
+          </ul>
+          <span *ngIf="!docente.cursos?.length">Sin cursos</span>
+        </td>
+
+        <td>
+          <button (click)="editarDocente(docente)">Editar</button>
+          <button (click)="eliminarDocente(docente.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="mensajeError" class="error">{{ mensajeError }}</p>
+
+</div>

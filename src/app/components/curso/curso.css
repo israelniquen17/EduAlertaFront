@@ -164,32 +164,3 @@ tbody button:last-child:hover {
     color: #1f2937;
   }
 }
-select {
-  flex: 1 1 30%;
-  padding: 10px 15px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: all 0.2s;
-}
-
-select:focus {
-  border-color: #3b82f6;
-  outline: none;
-  box-shadow: 0 0 5px rgba(59,130,246,0.3);
-}
-
-ul {
-  padding-left: 15px;
-  margin: 0;
-}
-
-ul li {
-  font-size: 0.9rem;
-}
-
-.error {
-  color: #ef4444;
-  font-weight: 500;
-  margin-top: 10px;
-}

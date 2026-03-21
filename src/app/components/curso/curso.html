@@ -1,40 +1,90 @@
-<div class="curso-container">
+<div class="curso-page">
+  <div class="curso-header">
+    <h2>Gestión de Cursos</h2>
+    <p>Administra cursos por nivel, grado y sección.</p>
+  </div>
 
-  <h2>{{ modoEdicion ? 'Editar Curso' : 'Nuevo Curso' }}</h2>
+  <div class="curso-grid">
+    <div class="curso-form-card">
+      <h3>{{ modoEdicion ? 'Editar curso' : 'Nuevo curso' }}</h3>
 
-  <form (ngSubmit)="guardarCurso()">
-    <input type="text" placeholder="Nombre" [(ngModel)]="nuevoCurso.nombre" name="nombre" required>
-    <input type="text" placeholder="Grado" [(ngModel)]="nuevoCurso.grado" name="grado" required>
-    <input type="text" placeholder="Sección" [(ngModel)]="nuevoCurso.seccion" name="seccion" required>
-    <button type="submit">{{ modoEdicion ? 'Actualizar' : 'Agregar' }}</button>
-    <button type="button" (click)="nuevoCurso={nombre:'',grado:'',seccion:''}; modoEdicion=false">Limpiar</button>
-  </form>
+      <form (ngSubmit)="guardarCurso()" class="curso-form">
+        <div class="form-row">
+          <label>Nombre</label>
+          <input type="text" [(ngModel)]="nuevoCurso.nombre" name="nombre" required>
+        </div>
 
-  <p *ngIf="mensajeError" style="color:red">{{ mensajeError }}</p>
+        <div class="form-row">
+          <label>Nivel</label>
+          <select [(ngModel)]="nuevoCurso.nivel" name="nivel" (ngModelChange)="actualizarGrados()" required>
+            <option [ngValue]="null">Seleccione nivel</option>
+            <option *ngFor="let n of niveles" [ngValue]="n">{{ n.nombre }}</option>
+          </select>
+        </div>
 
-  <hr>
+        <div class="form-row">
+          <label>Grado</label>
+          <select [(ngModel)]="nuevoCurso.grado" name="grado" required>
+            <option value="">Seleccione grado</option>
+            <option *ngFor="let g of gradosDisponibles" [value]="g">{{ g }}</option>
+          </select>
+        </div>
 
-  <h2>Lista de Cursos</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Grado</th>
-        <th>Sección</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let curso of cursos">
-        <td>{{ curso.nombre }}</td>
-        <td>{{ curso.grado }}</td>
-        <td>{{ curso.seccion }}</td>
-        <td>
-          <button type="button" (click)="editarCurso(curso)">✏️ Editar</button>
-          <button type="button" (click)="eliminarCurso(curso.id)">🗑️ Eliminar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        <div class="form-row">
+          <label>Sección</label>
+          <select [(ngModel)]="nuevoCurso.seccion" name="seccion" required>
+            <option value="">Seleccione sección</option>
+            <option *ngFor="let s of secciones" [value]="s">{{ s }}</option>
+          </select>
+        </div>
 
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            {{ modoEdicion ? 'Actualizar curso' : 'Registrar curso' }}
+          </button>
+          <button type="button" class="btn-secondary" (click)="resetFormulario()">
+            Limpiar
+          </button>
+        </div>
+
+        <div *ngIf="mensajeError" class="alert alert-error">{{ mensajeError }}</div>
+        <div *ngIf="mensajeOk" class="alert alert-ok">{{ mensajeOk }}</div>
+      </form>
+    </div>
+
+    <div class="curso-table-card">
+      <h3>Lista de cursos</h3>
+      <div class="tabla-wrapper">
+        <table *ngIf="cursos.length > 0">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Nivel</th>
+              <th>Grado</th>
+              <th>Sección</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let curso of cursos">
+              <td>{{ curso.nombre }}</td>
+              <td>{{ curso.nivel?.nombre }}</td>
+              <td>{{ curso.grado }}</td>
+              <td>{{ curso.seccion }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-edit" (click)="editarCurso(curso)">Editar</button>
+                  <button class="btn-delete" (click)="eliminarCurso(curso.id)">Eliminar</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="empty-state" *ngIf="cursos.length === 0">
+          No hay cursos registrados.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

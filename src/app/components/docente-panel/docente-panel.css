@@ -1,0 +1,194 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.docente-panel-page {
+  min-height: 100%;
+  padding: 32px;
+  background:
+    radial-gradient(circle at top left, rgba(14, 165, 233, 0.10), transparent 26%),
+    linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.hero-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 32px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, #0f172a 0%, #0f766e 55%, #06b6d4 100%);
+  color: white;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+  margin-bottom: 28px;
+}
+
+.hero-badge {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.hero-content h1 {
+  margin: 10px 0 10px;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.hero-content p {
+  margin: 0;
+  max-width: 700px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+}
+
+.hero-side {
+  min-width: 220px;
+}
+
+.hero-mini-card {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 22px;
+  padding: 22px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
+.hero-mini-card span {
+  display: block;
+  font-size: 0.92rem;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.hero-mini-card strong {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.acciones-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.action-card {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid #dbeafe;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 38px rgba(15, 23, 42, 0.12);
+  border-color: #7dd3fc;
+}
+
+.action-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  background: linear-gradient(135deg, #cffafe, #e0f2fe);
+}
+
+.action-body h2 {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.action-body p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.action-btn {
+  align-self: flex-start;
+  border: none;
+  background: linear-gradient(135deg, #0891b2, #06b6d4);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(8, 145, 178, 0.18);
+}
+
+.info-card {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.info-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.info-card p {
+  margin: 0;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .acciones-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hero-side {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .hero-mini-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .docente-panel-page {
+    padding: 18px;
+  }
+
+  .hero-card,
+  .action-card,
+  .info-card {
+    padding: 20px;
+  }
+
+  .hero-content h1 {
+    font-size: 1.6rem;
+  }
+}

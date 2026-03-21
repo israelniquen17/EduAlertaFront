@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
-import { AuthService } from '../../app/services/auth.service'; // 🔹 Importa tu servicio de auth
+import { AuthService } from '../../app/services/auth.service';
 
 export interface Usuario {
   id: number;
@@ -21,21 +21,24 @@ export interface Usuario {
   styleUrls: ['./login.css'],
 })
 export class Login {
-
   email: string = '';
   password: string = '';
   error: string = '';
   loading: boolean = false;
+  mostrarPassword: boolean = false;
 
   constructor(
     private router: Router,
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService // 🔹 Inyecta AuthService
+    private authService: AuthService
   ) {}
 
+  togglePasswordVisibility(): void {
+    this.mostrarPassword = !this.mostrarPassword;
+  }
+
   login() {
-    // Validar campos
     if (!this.email || !this.password) {
       this.error = 'Complete todos los campos';
       return;
@@ -53,23 +56,20 @@ export class Login {
       }))
       .subscribe({
         next: (response: any) => {
-          // Manejo de errores devueltos por el backend
           if (response.code && response.code === 403) {
             this.error = 'Usuario o contraseña incorrecta';
             return;
           }
+
           if (response.estado !== 'ACTIVO') {
             this.error = 'Usuario inactivo';
             return;
           }
 
-          // 🔹 Guardar usuario en AuthService (localStorage también se actualiza ahí)
           this.authService.setUsuario(response);
 
-          // 🔹 Redirigir según rol
           if (response.rol === 'PADRE') {
             this.router.navigate(['/padres']).then(() => {
-              // 🔹 Forzar cambio de detección para que el PadreComponent lea el usuario inmediatamente
               this.cdr.detectChanges();
             });
           } else if (response.rol === 'ADMIN') {

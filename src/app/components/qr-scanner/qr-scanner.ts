@@ -1,8 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { AlumnoService, Alumno } from '../../app/alumno';
+import { AlumnoService, Alumno } from '../../app/services/alumno';
 import { HttpClient } from '@angular/common/http';
+
+interface AsistenciaResponse {
+  mensaje: string;
+  alumno: string;
+  hora: string;
+}
 
 @Component({
   selector: 'app-qr-scanner',
@@ -14,21 +20,44 @@ import { HttpClient } from '@angular/common/http';
 export class QrScannerComponent {
 
   alumno: Alumno | null = null;
-  escaneado: boolean = false;
-  alertado: boolean = false;
+  escaneado = false;
+  alertado = false;
 
-  private apiHistorial = 'http://localhost:8080/api/historial/asistencia/dni';
+  private qrDataEscaneada = '';
+  private apiAsistencia = 'http://localhost:8080/api/asistencia/registrar';
 
-  constructor(private alumnoService: AlumnoService, private http: HttpClient) {}
+  constructor(
+    private alumnoService: AlumnoService,
+    private http: HttpClient
+  ) {}
 
   onScan(resultado: string): void {
     if (this.escaneado) return;
 
-    let dni: string;
-    try { dni = JSON.parse(resultado).dni; }
-    catch { dni = resultado.trim(); }
+    this.qrDataEscaneada = resultado.trim();
 
-    console.log("DNI escaneado:", dni);
+    let dni = '';
+
+    try {
+      const data = JSON.parse(this.qrDataEscaneada);
+      if (data?.dni) {
+        dni = String(data.dni).trim();
+      }
+    } catch {
+      const texto = this.qrDataEscaneada;
+
+      if (texto.startsWith('QR-')) {
+        dni = texto.replace('QR-', '').trim();
+      } else {
+        dni = texto.trim();
+      }
+    }
+
+    if (!dni) {
+      alert('QR inválido');
+      this.reiniciar();
+      return;
+    }
 
     this.alumnoService.obtenerPorIdDni(dni).subscribe({
       next: (data: Alumno) => {
@@ -47,20 +76,24 @@ export class QrScannerComponent {
     this.escaneado = false;
     this.alumno = null;
     this.alertado = false;
+    this.qrDataEscaneada = '';
   }
 
   alertarAsistencia(): void {
-    if (!this.alumno || this.alertado) return;
+    if (!this.alumno || !this.qrDataEscaneada || this.alertado) return;
 
-    this.http.post(`${this.apiHistorial}/${this.alumno.dni}`,
-                   { dispositivo: 'Web QR Scanner' },
-                   { responseType: 'text' })
-      .subscribe({
-        next: (res: string) => {
-          this.alertado = true;
-          alert(res);
-        },
-        error: () => alert('Error al registrar asistencia')
-      });
+    this.http.post<AsistenciaResponse>(this.apiAsistencia, {
+      qrData: this.qrDataEscaneada,
+      dispositivo: 'Web QR Scanner'
+    }).subscribe({
+      next: (res) => {
+        this.alertado = true;
+        alert(`${res.mensaje}\nAlumno: ${res.alumno}\nHora: ${res.hora}`);
+      },
+      error: (err) => {
+        console.error('Error al registrar asistencia:', err);
+        alert(err.error?.message || err.error?.mensaje || 'Error al registrar asistencia');
+      }
+    });
   }
 }

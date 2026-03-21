@@ -1,63 +1,122 @@
-<div class="form-container">
+<div class="form-wrapper">
 
-  <h2>Registrar Alumno</h2>
+  <div class="form-card">
+    <h2 class="titulo">Registrar Alumno</h2>
 
-  <form class="formulario">
+    <form class="form-grid">
 
-    <input [(ngModel)]="alumno.dni" name="dni" placeholder="DNI" required>
-    <input [(ngModel)]="alumno.nombres" name="nombres" placeholder="Nombres" required>
-    <input [(ngModel)]="alumno.apellidos" name="apellidos" placeholder="Apellidos" required>
+      <!-- DATOS DEL ALUMNO -->
+      <div class="section">
+        <h3>Datos del Alumno</h3>
 
-    <!-- 🔹 Combobox para Grado -->
-    <label>Grado:</label>
-    <select [(ngModel)]="alumno.grado" name="grado" required>
-      <option *ngFor="let g of grados" [value]="g">{{ g }}</option>
-    </select>
+        <div class="grid-2">
+          <input [(ngModel)]="alumno.dni" name="dni" placeholder="DNI" maxlength="9" required>
+          <input [(ngModel)]="alumno.nombres" name="nombres" placeholder="Nombres" required>
+          <input [(ngModel)]="alumno.apellidos" name="apellidos" placeholder="Apellidos" required>
+        </div>
 
-    <!-- 🔹 Combobox para Sección -->
-    <label>Sección:</label>
-    <select [(ngModel)]="alumno.seccion" name="seccion" required>
-      <option *ngFor="let s of secciones" [value]="s">{{ s }}</option>
-    </select>
+        <div class="grid-2">
 
-    <!-- 🔹 Solo visible para admin -->
-    <div *ngIf="esAdministrador">
+          <!-- NIVEL -->
+          <div>
+            <label>Nivel</label>
+            <select
+              [(ngModel)]="alumno.nivel.id"
+              name="nivel"
+              (ngModelChange)="actualizarGradosPorNivel()"
+              required
+            >
+              <option [ngValue]="null" disabled>Seleccione nivel</option>
+              <option *ngFor="let n of niveles" [ngValue]="n.id">
+                {{ n.nombre }}
+              </option>
+            </select>
+          </div>
 
-      <label>Curso:</label>
-      <select [(ngModel)]="alumno.curso" name="curso">
-        <option *ngFor="let c of cursos" [value]="c">{{ c }}</option>
-      </select>
+          <!-- GRADO -->
+          <div>
+            <label>Grado</label>
+            <select [(ngModel)]="alumno.grado" name="grado" required>
+              <option value="" disabled>Seleccione grado</option>
+              <option *ngFor="let g of gradosDisponibles" [value]="g">
+                {{ g }}
+              </option>
+            </select>
+          </div>
 
-      <label>Docente:</label>
-      <select [(ngModel)]="alumno.docente" name="docente">
-        <option *ngFor="let d of docentes" [value]="d">{{ d }}</option>
-      </select>
+          <!-- SECCIÓN -->
+          <div>
+            <label>Sección</label>
+            <select [(ngModel)]="alumno.seccion" name="seccion" required>
+              <option value="" disabled>Seleccione sección</option>
+              <option *ngFor="let s of secciones" [value]="s">
+                {{ s }}
+              </option>
+            </select>
+          </div>
 
-      <label>Padre:</label>
-      <select [(ngModel)]="alumno.padre" name="padre">
-        <option *ngFor="let p of padres" [value]="p">{{ p }}</option>
-      </select>
+        </div>
+      </div>
 
-    </div>
+      <!-- DATOS PADRE -->
+      <div class="section">
+        <h3>Datos del Padre / Madre</h3>
 
-    <button type="button" (click)="guardar()">
-      Guardar y Generar QR
-    </button>
+        <div class="grid-2">
+          <input [(ngModel)]="alumno.padres[0].dni" name="dniPadre" placeholder="DNI Padre" maxlength="8" required>
+          <input [(ngModel)]="alumno.padres[0].nombres" name="nombrePadre" placeholder="Nombres Padre" required>
+          <input [(ngModel)]="alumno.padres[0].apellidos" name="apellidoPadre" placeholder="Apellidos Padre" required>
+          <input [(ngModel)]="alumno.padres[0].telefono" name="telefonoPadre" placeholder="Teléfono Padre" maxlength="9" required>
+        </div>
+      </div>
 
-  </form>
+      <button type="button" class="btn-guardar" (click)="guardar()">
+        Guardar y Generar QR
+      </button>
+    </form>
+  </div>
 
-  <!-- 🔹 QR EN TIEMPO REAL -->
-  <div class="qr-section"
-       *ngIf="alumno.dni || alumno.nombres || alumno.apellidos">
-
-    <h3>QR en tiempo real</h3>
+  <!-- Vista previa del QR -->
+  <div class="qr-card" *ngIf="alumno.dni && !mostrarQrFinal">
+    <h3>Vista previa del QR</h3>
 
     <qrcode
       [qrdata]="qrData"
       [width]="200"
       [errorCorrectionLevel]="'M'">
     </qrcode>
+  </div>
 
+  <!-- QR final -->
+  <div class="qr-card qr-final" *ngIf="mostrarQrFinal">
+    <h3>QR generado correctamente</h3>
+
+    <p><strong>Alumno:</strong> {{ alumnoRegistrado?.nombres }} {{ alumnoRegistrado?.apellidos }}</p>
+    <p><strong>DNI:</strong> {{ alumnoRegistrado?.dni }}</p>
+    <p><strong>Grado:</strong> {{ alumnoRegistrado?.grado }}</p>
+    <p><strong>Sección:</strong> {{ alumnoRegistrado?.seccion }}</p>
+
+    <div id="zona-imprimir" class="pdf-qr-content">
+      <qrcode
+        [qrdata]="qrGenerado"
+        [width]="220"
+        [errorCorrectionLevel]="'M'">
+      </qrcode>
+    </div>
+
+    <div class="acciones-qr">
+      <button type="button" class="btn-guardar" (click)="descargarQrPdf()">
+        Descargar PDF
+      </button>
+
+      <button type="button" class="btn-secundario" (click)="imprimirQr()">
+        Imprimir
+      </button>
+
+      <button type="button" class="btn-limpiar" (click)="limpiarFormulario()">
+        Nuevo registro
+      </button>
+    </div>
   </div>
 
 </div>

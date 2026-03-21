@@ -1,38 +1,117 @@
-<div class="container">
-  <h2>Dashboard del Padre</h2>
+ <div class="padre-page">
+  <div class="hero-card">
+    <div class="hero-left">
+      <span class="hero-badge">Mis hijos</span>
+      <h1>Bienvenido, {{ nombreBienvenida }}</h1>
+      <p>
+        Aquí puedes consultar la información de tu hijo y revisar las notificaciones
+        de ingreso registradas por el sistema EduAlerta.
+      </p>
+    </div>
 
-  <!-- 🔔 Notificaciones -->
-  <div class="notificaciones-header">
-    <span>🔔</span>
-    <!-- Solo mostrar badge si hay notificaciones -->
-    <span *ngIf="notificaciones.length > 0" class="badge">{{ notificaciones.length }}</span>
-    <button class="btn-small" (click)="marcarLeidas()" [disabled]="notificaciones.length === 0">
-      Marcar todas leídas
-    </button>
-  </div>
-
-  <!-- 🔹 Alumnos vinculados -->
-  <h3>Alumnos vinculados</h3>
-  <div *ngIf="alumnos.length > 0; else noAlumnos">
-    <div class="alumno-card" *ngFor="let alumno of alumnos">
-      <p><strong>{{ alumno.nombres }} {{ alumno.apellidos }}</strong></p>
-      <p>Grado: {{ alumno.grado }} | Sección: {{ alumno.seccion }}</p>
-      <p>DNI: {{ alumno.dni }}</p>
+    <div class="hero-right">
+      <div class="hero-stat">
+        <span class="hero-stat-label">Notificaciones pendientes</span>
+        <strong>{{ notificaciones.length }}</strong>
+      </div>
     </div>
   </div>
-  <ng-template #noAlumnos>
-    <p>No hay alumnos vinculados.</p>
-  </ng-template>
 
-  <!-- 🔹 Notificaciones -->
-  <h3>Notificaciones</h3>
-  <div *ngIf="notificaciones.length > 0; else noNotificaciones">
-    <div class="notificacion" *ngFor="let notif of notificaciones">
-      <p>{{ notif.mensaje }}</p>
-      <small>{{ notif.fecha }} | {{ notif.hora }}</small>
-    </div>
+  <div class="content-grid">
+    <section class="panel panel-main">
+      <div class="panel-header">
+        <div>
+          <h2>Información del estudiante</h2>
+          <p>Datos del alumno vinculado a tu cuenta</p>
+        </div>
+      </div>
+
+      <ng-container *ngIf="alumnos.length > 0; else noAlumnos">
+        <div class="student-card" *ngFor="let alumno of alumnos">
+          <div class="student-top">
+            <div class="student-avatar">
+              {{ alumno.nombres?.charAt(0) }}{{ alumno.apellidos?.charAt(0) }}
+            </div>
+
+            <div class="student-main">
+              <h3>{{ alumno.nombres }} {{ alumno.apellidos }}</h3>
+              <span class="student-status" [ngClass]="{
+                'activo': alumno.estado === 'ACTIVO',
+                'inactivo': alumno.estado === 'INACTIVO'
+              }">
+                {{ alumno.estado || 'ACTIVO' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="student-info-grid">
+            <div class="info-box">
+              <span class="info-label">DNI</span>
+              <strong>{{ alumno.dni }}</strong>
+            </div>
+
+            <div class="info-box">
+              <span class="info-label">Grado</span>
+              <strong>{{ alumno.grado }}</strong>
+            </div>
+
+            <div class="info-box">
+              <span class="info-label">Sección</span>
+              <strong>{{ alumno.seccion }}</strong>
+            </div>
+
+            <div class="info-box">
+              <span class="info-label">Nivel</span>
+              <strong>{{ alumno.nivel?.nombre || 'No registrado' }}</strong>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noAlumnos>
+        <div class="empty-state">
+          <div class="empty-icon">🎓</div>
+          <h3>No hay hijos vinculados</h3>
+          <p>Aún no se encontró un alumno asociado a esta cuenta.</p>
+        </div>
+      </ng-template>
+    </section>
+
+    <aside class="panel panel-side">
+      <div class="panel-header">
+        <div>
+          <h2>Notificaciones</h2>
+          <p>Alertas recientes de asistencia</p>
+        </div>
+
+        <button
+          class="btn-mark"
+          (click)="marcarLeidas()"
+          [disabled]="notificaciones.length === 0">
+          Marcar leídas
+        </button>
+      </div>
+
+      <ng-container *ngIf="notificaciones.length > 0; else noNotificaciones">
+        <div class="notificaciones-list">
+          <div class="notif-card" *ngFor="let notif of notificaciones">
+            <div class="notif-icon">🔔</div>
+
+            <div class="notif-body">
+              <p class="notif-text">{{ notif.mensaje }}</p>
+              <small class="notif-date">{{ formatearFecha(notif.fecha) }}</small>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noNotificaciones>
+        <div class="empty-state small">
+          <div class="empty-icon">🔕</div>
+          <h3>Sin notificaciones</h3>
+          <p>No hay alertas nuevas por el momento.</p>
+        </div>
+      </ng-template>
+    </aside>
   </div>
-  <ng-template #noNotificaciones>
-    <p>No hay notificaciones aún.</p>
-  </ng-template>
 </div>

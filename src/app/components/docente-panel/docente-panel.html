@@ -1,0 +1,51 @@
+<div class="docente-panel-page">
+  <section class="hero-card">
+    <div class="hero-content">
+      <span class="hero-badge">Panel del docente</span>
+      <h1>Bienvenido, {{ nombreDocente }}</h1>
+      <p>
+        Desde aquí puedes acceder rápidamente a las funciones principales de tu trabajo diario:
+        revisar alumnos y registrar asistencia mediante el escáner QR.
+      </p>
+    </div>
+
+    <div class="hero-side">
+      <div class="hero-mini-card">
+        <span>Accesos disponibles</span>
+        <strong>2</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="acciones-grid">
+    <article class="action-card" (click)="irAAlumnos()">
+      <div class="action-icon">📋</div>
+      <div class="action-body">
+        <h2>Ver alumnos</h2>
+        <p>
+          Consulta la lista de alumnos registrados y revisa su información académica.
+        </p>
+      </div>
+      <button class="action-btn">Ingresar</button>
+    </article>
+
+    <article class="action-card" (click)="irAEscaner()">
+      <div class="action-icon">📷</div>
+      <div class="action-body">
+        <h2>Escanear QR</h2>
+        <p>
+          Registra el ingreso de los alumnos de forma rápida usando el lector QR.
+        </p>
+      </div>
+      <button class="action-btn">Abrir escáner</button>
+    </article>
+  </section>
+
+  <section class="info-card">
+    <h3>Acceso del docente</h3>
+    <p>
+      Tu perfil solo tiene acceso a las funciones necesarias para el control de alumnos
+      y el registro de asistencia.
+    </p>
+  </section>
+</div>

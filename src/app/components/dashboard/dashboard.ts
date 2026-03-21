@@ -1,8 +1,9 @@
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../app/services/auth.service';
 
-interface AlumnoAsistencia {
+interface AsistenciaHoy {
   dni: string;
   nombre: string;
   grado: string;
@@ -11,69 +12,132 @@ interface AlumnoAsistencia {
   horaIngreso: string;
 }
 
-interface Usuario {
-  id: number;
-  usuario: string;
-  rol: 'ADMIN' | 'DOCENTE';
-  estado: 'ACTIVO' | 'INACTIVO';
+interface DashboardResumen {
+  totalAlumnos: number;
+  presentes: number;
+  ausentes: number;
+  tardanzas: number;
+  asistenciasHoy: AsistenciaHoy[];
+  alertas: string[];
 }
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true, // 🔥 FALTABA ESTO
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css'],
+  styleUrls: ['./dashboard.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
-  usuarioLogueado!: Usuario | null;
+  usuarioLogueado: any = null;
 
-  totalAlumnos: number = 450;
-  presentes: number = 380;
-  ausentes: number = 50;
-  tardanzas: number = 20;
+  totalAlumnos = 0;
+  presentes = 0;
+  ausentes = 0;
+  tardanzas = 0;
 
-  asistenciasHoy: AlumnoAsistencia[] = [];
+  asistenciasHoy: AsistenciaHoy[] = [];
   alertas: string[] = [];
 
+  cargando = true;
+  mensajeError = '';
+
+  apiUrl = 'http://localhost:8080/api/dashboard';
+  private eventSource: EventSource | null = null;
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
+  ) {}
+
   ngOnInit(): void {
-    this.obtenerUsuario();
-    this.cargarDatos();
+    this.usuarioLogueado = this.authService.getUsuario();
+
+    // Carga inicial
+    this.cargarDashboard();
+
+    // Escucha cambios en tiempo real
+    this.iniciarStream();
   }
 
-  obtenerUsuario() {
-    const data = localStorage.getItem('user');
-    if (data) {
-      this.usuarioLogueado = JSON.parse(data);
+  ngOnDestroy(): void {
+    this.cerrarStream();
+  }
+
+  cargarDashboard(silencioso: boolean = false): void {
+    if (!silencioso) {
+      this.cargando = true;
+      this.mensajeError = '';
+      this.cdr.detectChanges();
+    }
+
+    this.http.get<DashboardResumen>(this.apiUrl).subscribe({
+      next: (data) => {
+        this.ngZone.run(() => {
+          this.totalAlumnos = data.totalAlumnos ?? 0;
+          this.presentes = data.presentes ?? 0;
+          this.ausentes = data.ausentes ?? 0;
+          this.tardanzas = data.tardanzas ?? 0;
+          this.asistenciasHoy = data.asistenciasHoy ?? [];
+          this.alertas = data.alertas ?? [];
+          this.cargando = false;
+          this.mensajeError = '';
+
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err: HttpErrorResponse) => {
+        this.ngZone.run(() => {
+          console.error('Error al cargar dashboard:', err);
+          this.mensajeError =
+            err.error?.message ||
+            err.error?.mensaje ||
+            'No se pudo cargar el dashboard.';
+          this.cargando = false;
+
+          this.cdr.detectChanges();
+        });
+      }
+    });
+  }
+
+  private iniciarStream(): void {
+    this.cerrarStream();
+
+    this.eventSource = new EventSource(`${this.apiUrl}/stream`);
+
+    this.eventSource.addEventListener('dashboard-update', () => {
+      this.ngZone.run(() => {
+        this.cargarDashboard(true);
+      });
+    });
+
+    this.eventSource.onerror = (error) => {
+      console.error('Error en el stream del dashboard:', error);
+    };
+  }
+
+  private cerrarStream(): void {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
     }
   }
 
-  cargarDatos() {
-    this.asistenciasHoy = [
-      {
-        dni: '12345678',
-        nombre: 'Juan Pérez',
-        grado: '5to',
-        seccion: 'A',
-        estado: 'Presente',
-        horaIngreso: '07:45 AM'
-      },
-      {
-        dni: '87654321',
-        nombre: 'María López',
-        grado: '4to',
-        seccion: 'B',
-        estado: 'Tardanza',
-        horaIngreso: '08:15 AM'
-      }
-    ];
-
-    this.alertas = [
-      'Alumno con más de 3 inasistencias',
-      '5 alumnos no registraron ingreso hoy',
-      '2 alumnos con tardanza recurrente'
-    ];
+  get porcentajeAsistencia(): number {
+    if (!this.totalAlumnos || this.totalAlumnos <= 0) return 0;
+    return Math.round((this.presentes / this.totalAlumnos) * 100);
   }
 
+  get fechaActual(): string {
+    return new Date().toLocaleDateString('es-PE', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
 }

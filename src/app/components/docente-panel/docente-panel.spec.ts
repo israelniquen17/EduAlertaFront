@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AlumnoQrComponent} from './alumno-qr';
+import { DocentePanelComponent } from './docente-panel';
 
-describe('AlumnoQr', () => {
-  let component: AlumnoQrComponent;
-  let fixture: ComponentFixture<AlumnoQrComponent>;
+describe('DocentePanel', () => {
+  let component: DocentePanelComponent;
+  let fixture: ComponentFixture<DocentePanelComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AlumnoQrComponent]
+      imports: [DocentePanelComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AlumnoQrComponent);
+    fixture = TestBed.createComponent(DocentePanelComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

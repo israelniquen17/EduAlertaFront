@@ -26,16 +26,38 @@ export class LayoutComponent implements OnInit {
     this.usuario = data ? JSON.parse(data) : null;
   }
 
-  toggleMenu() {
+  get esAdmin(): boolean {
+    return this.usuario?.rol === 'ADMIN';
+  }
+
+  get esDocente(): boolean {
+    return this.usuario?.rol === 'DOCENTE';
+  }
+
+  get esPadre(): boolean {
+    return this.usuario?.rol === 'PADRE';
+  }
+
+  toggleMenu(): void {
     this.menuAbierto = !this.menuAbierto;
   }
 
-  cerrarSesion() {
+  cerrarMenu(): void {
+    this.menuAbierto = false;
+  }
+
+  cerrarMenuSiMobile(): void {
+    if (window.innerWidth <= 768) {
+      this.menuAbierto = false;
+    }
+  }
+
+  cerrarSesion(): void {
     const confirmar = confirm('¿Estás seguro que deseas cerrar sesión?');
 
     if (confirmar) {
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      this.router.navigate(['/login']);
     }
   }
 }

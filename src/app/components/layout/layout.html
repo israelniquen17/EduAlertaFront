@@ -1,42 +1,79 @@
 <div class="layout">
 
-  <!-- HEADER -->
   <header class="header">
-    <button class="menu-btn" (click)="toggleMenu()">☰</button>
-    <h1>EduAlerta</h1>
-
-    <div class="usuario" *ngIf="usuario">
-      {{ usuario.usuario }} ({{ usuario.rol }}) 
+    <div class="header-left">
+      <button class="menu-btn" (click)="toggleMenu()">☰</button>
+      <h1>EduAlerta</h1>
     </div>
 
-    <button (click)="cerrarSesion()" class="btn-logout">Cerrar Sesión</button>
+    <div class="header-right">
+      <div class="usuario" *ngIf="usuario">
+        {{ usuario.usuario }} ({{ usuario.rol }})
+      </div>
+
+      <button (click)="cerrarSesion()" class="btn-logout">
+        Cerrar Sesión
+      </button>
+    </div>
   </header>
 
-  <!-- SIDEBAR -->
   <nav class="sidebar" [class.open]="menuAbierto">
 
-    <!-- ADMIN -->
-<a *ngIf="usuario?.rol === 'ADMIN'" routerLink="/dashboard">🏠 Dashboard</a>
-<a *ngIf="usuario?.rol === 'ADMIN'" routerLink="/crear-alumno">➕ Registrar Alumno</a>
-<a *ngIf="usuario?.rol === 'ADMIN'" routerLink="/alumnos">📋 Lista Alumnos</a>
-<a *ngIf="usuario?.rol === 'ADMIN'" routerLink="/alumno-qr">🔳 QR Generado</a>
-<a *ngIf="usuario?.rol === 'ADMIN'" routerLink="/docentes">👩‍🏫 Docentes</a>
-<a *ngIf="usuario?.rol === 'ADMIN'" routerLink="/cursos">📚 Cursos</a>
+    <div class="sidebar-section" *ngIf="esAdmin">
+      <span class="sidebar-title">Administración</span>
 
-<!-- ADMIN Y DOCENTE -->
-<a *ngIf="usuario?.rol === 'ADMIN' || usuario?.rol === 'DOCENTE'" routerLink="/alumnos">📋 Alumnos</a>
-<a *ngIf="usuario?.rol === 'ADMIN' || usuario?.rol === 'DOCENTE'" routerLink="/lector-qr">📷 Lector QR</a>
+      <a routerLink="/dashboard" routerLinkActive="active-link" (click)="cerrarMenu()">
+        🏠 Dashboard
+      </a>
 
-    <!-- PADRE -->
-    <ng-container *ngIf="usuario?.rol === 'PADRE'">
-      <a routerLink="/alumnos" (click)="toggleMenu()">📋 Mis hijos</a>
-      <a routerLink="/lector-qr" (click)="toggleMenu()">📷 Lector QR</a>
-    </ng-container>
+      <a routerLink="/crear-alumno" routerLinkActive="active-link" (click)="cerrarMenu()">
+        ➕ Registrar Alumno
+      </a>
+
+      <a routerLink="/alumnos" routerLinkActive="active-link" (click)="cerrarMenu()">
+        📋 Lista Alumnos
+      </a>
+
+      <a routerLink="/docentes" routerLinkActive="active-link" (click)="cerrarMenu()">
+        👩‍🏫 Docentes
+      </a>
+
+      <a routerLink="/cursos" routerLinkActive="active-link" (click)="cerrarMenu()">
+        📚 Cursos
+      </a>
+
+      <a routerLink="/lector-qr" routerLinkActive="active-link" (click)="cerrarMenu()">
+        📷 Lector QR
+      </a>
+    </div>
+
+    <div class="sidebar-section" *ngIf="esDocente">
+  <span class="sidebar-title">Docente</span>
+
+  <a routerLink="/panel-docente" routerLinkActive="active-link" (click)="cerrarMenu()">
+    🧑‍🏫 Mi panel
+  </a>
+
+  <a routerLink="/alumnos" routerLinkActive="active-link" (click)="cerrarMenu()">
+    📋 Alumnos
+  </a>
+
+  <a routerLink="/lector-qr" routerLinkActive="active-link" (click)="cerrarMenu()">
+    📷 Escanear QR
+  </a>
+</div>
+
+    <div class="sidebar-section" *ngIf="esPadre">
+      <span class="sidebar-title">Familia</span>
+
+      <a routerLink="/padres" routerLinkActive="active-link" (click)="cerrarMenu()">
+        👨‍👩‍👦 Mis hijos
+      </a>
+    </div>
 
   </nav>
 
-  <!-- CONTENIDO -->
-  <main class="content">
+  <main class="content" (click)="cerrarMenuSiMobile()">
     <router-outlet></router-outlet>
   </main>
 

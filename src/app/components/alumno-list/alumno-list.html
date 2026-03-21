@@ -1,111 +1,334 @@
-<div class="alumno-container">
+<div class="alumno-page">
+  <div class="page-header">
+    <div>
+      <h1>Gestión de Alumnos</h1>
+      <p>Consulta, filtra y administra el registro de alumnos.</p>
+    </div>
 
-  <div class="header-list">
-    <h2>Lista de Alumnos</h2>
-
-    <input 
-      type="text" 
-      placeholder="Buscar por nombre o DNI..."
-      [(ngModel)]="filtro"
-      (input)="filtrarAlumnos()"
-    >
+    <div class="header-badge">
+      <span>Total visibles</span>
+      <strong>{{ alumnosFiltrados.length }}</strong>
+    </div>
   </div>
 
-  <p class="contador">
-    Total registrados: <strong>{{ alumnosFiltrados.length }}</strong>
-  </p>
+  <div class="filtros-card">
+    <div class="filtros-top">
+      <div class="input-group input-busqueda">
+        <label>Buscar</label>
+        <input
+          type="text"
+          placeholder="Buscar por nombre, apellido o DNI..."
+          [(ngModel)]="filtro"
+          (input)="filtrarAlumnos()"
+        />
+      </div>
+    </div>
 
-  <div class="tabla-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>DNI</th>
-          <th>Nombres</th>
-          <th>Apellidos</th>
-          <th>Grado</th>
-          <th>Sección</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+    <div class="filtros-grid">
+      <div class="input-group">
+        <label>Nivel</label>
+        <select [(ngModel)]="filtroNivel" (change)="filtrarAlumnos()">
+          <option value="">Todos</option>
+          <option *ngFor="let n of niveles" [value]="n.nombre">
+            {{ n.nombre }}
+          </option>
+        </select>
+      </div>
 
-      <tbody>
-        <tr *ngFor="let alumno of alumnosFiltrados">
+      <div class="input-group">
+        <label>Grado</label>
+        <select [(ngModel)]="filtroGrado" (change)="filtrarAlumnos()">
+          <option value="">Todos</option>
+          <option *ngFor="let g of gradosDisponibles" [value]="g">
+            {{ g }}
+          </option>
+        </select>
+      </div>
 
-          <td>{{ alumno.dni }}</td>
-          <td>{{ alumno.nombres }}</td>
-          <td>{{ alumno.apellidos }}</td>
-          <td>{{ alumno.grado }}</td>
-          <td>{{ alumno.seccion }}</td>
+      <div class="input-group">
+        <label>Sección</label>
+        <select [(ngModel)]="filtroSeccion" (change)="filtrarAlumnos()">
+          <option value="">Todas</option>
+          <option *ngFor="let s of seccionesDisponibles" [value]="s">
+            {{ s }}
+          </option>
+        </select>
+      </div>
 
-          <td>
-            <span 
-              [ngClass]="{
-                'activo': alumno.estado === 'ACTIVO',
-                'inactivo': alumno.estado === 'INACTIVO'
-              }">
-              {{ alumno.estado }}
-            </span>
-          </td>
+      <div class="input-group">
+        <label>Estado</label>
+        <select [(ngModel)]="filtroEstado" (change)="filtrarAlumnos()">
+          <option value="">Todos</option>
+          <option value="ACTIVO">Activos</option>
+          <option value="INACTIVO">Inactivos</option>
+        </select>
+      </div>
+    </div>
 
-          <td class="acciones-btn">
+    <div class="acciones-filtro">
+      <button class="btn btn-secondary" (click)="limpiarFiltros()">
+        Limpiar filtros
+      </button>
+    </div>
+  </div>
 
-            <button class="editar" (click)="abrirModal(alumno)">
-              ✏
-            </button>
+  <div class="tabla-card">
+    <div class="tabla-header">
+      <h2>Lista de alumnos</h2>
+      <span class="tabla-subtitle">Resultados filtrados en tiempo real</span>
+    </div>
 
-            <button class="eliminar" (click)="eliminarAlumno(alumno.id)">
-              🗑
-            </button>
+    <div class="tabla-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>DNI</th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Grado</th>
+            <th>Sección</th>
+            <th>Nivel</th>
+            <th>Padres Vinculados</th>
+            <th>Estado</th>
+            <th class="acciones-col">QR</th>
+            <th class="acciones-col">Acciones</th>
+          </tr>
+        </thead>
 
-          </td>
+        <tbody>
+          <tr *ngFor="let alumno of alumnosFiltrados; trackBy: trackByAlumno">
+            <td>{{ alumno.dni }}</td>
+            <td>{{ alumno.nombres }}</td>
+            <td>{{ alumno.apellidos }}</td>
+            <td>{{ alumno.grado }}</td>
+            <td>{{ alumno.seccion }}</td>
+            <td>{{ alumno.nivel.nombre }}</td>
 
-        </tr>
+            <td>
+              <div *ngIf="alumno.padres && alumno.padres.length > 0; else sinPadres">
+                <div *ngFor="let padre of alumno.padres" class="padre-item">
+                  <div class="padre-nombre">👨 {{ padre.nombres }} {{ padre.apellidos }}</div>
+                  <div class="padre-telefono">📞 {{ padre.telefono || 'Sin teléfono' }}</div>
+                </div>
+              </div>
 
-        <tr *ngIf="alumnosFiltrados.length === 0">
-          <td colspan="7" class="sin-datos">
-            No hay alumnos registrados.
-          </td>
-        </tr>
+              <ng-template #sinPadres>
+                <span class="sin-padre">Sin padres registrados</span>
+              </ng-template>
+            </td>
 
-      </tbody>
-    </table>
+            <td>
+              <span
+                class="estado-badge"
+                [ngClass]="{
+                  'estado-activo': alumno.estado === 'ACTIVO',
+                  'estado-inactivo': alumno.estado === 'INACTIVO'
+                }"
+              >
+                {{ alumno.estado || 'SIN ESTADO' }}
+              </span>
+            </td>
+
+            <td class="acciones-btn">
+              <button
+                class="btn-icon qr-btn"
+                (click)="abrirModalQr(alumno)"
+                title="Ver QR"
+              >
+                📷
+              </button>
+            </td>
+
+            <td class="acciones-btn">
+              <button
+                class="btn-icon editar"
+                (click)="abrirModal(alumno)"
+                title="Editar"
+              >
+                ✏
+              </button>
+
+              <button
+                class="btn-icon eliminar"
+                (click)="eliminarAlumno(alumno.id)"
+                title="Eliminar"
+              >
+                🗑
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="alumnosFiltrados.length === 0">
+            <td colspan="10" class="sin-datos">
+              No hay alumnos que coincidan con los filtros seleccionados.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
-
-<!-- 🔥 MODAL DE EDICIÓN -->
-<div class="modal-backdrop" *ngIf="mostrarModal">
-
-  <div class="modal">
-
-    <h3>Editar Alumno</h3>
-
-    <label>DNI</label>
-    <input [(ngModel)]="alumnoSeleccionado!.dni">
-
-    <label>Nombres</label>
-    <input [(ngModel)]="alumnoSeleccionado!.nombres">
-
-    <label>Apellidos</label>
-    <input [(ngModel)]="alumnoSeleccionado!.apellidos">
-
-    <label>Grado</label>
-    <input [(ngModel)]="alumnoSeleccionado!.grado">
-
-    <label>Sección</label>
-    <input [(ngModel)]="alumnoSeleccionado!.seccion">
-
-    <label>Estado</label>
-    <select [(ngModel)]="alumnoSeleccionado!.estado">
-      <option value="ACTIVO">ACTIVO</option>
-      <option value="INACTIVO">INACTIVO</option>
-    </select>
-
-    <div class="modal-actions">
-      <button class="guardar" (click)="guardarCambios()">💾 Guardar</button>
-      <button class="cancelar" (click)="cerrarModal()">❌ Cancelar</button>
+<!-- Modal editar -->
+<div *ngIf="mostrarModal" class="modal-overlay">
+  <div class="modal-content modal-lg">
+    <div class="modal-header">
+      <h2>Editar Alumno</h2>
+      <button class="close-btn" (click)="cerrarModal()">✕</button>
     </div>
 
+    <div class="modal-body">
+      <div class="section-edit">
+        <h3>Datos del Alumno</h3>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label>DNI</label>
+            <input
+              type="text"
+              maxlength="8"
+              [(ngModel)]="alumnoSeleccionado!.dni"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Nombres</label>
+            <input
+              type="text"
+              [(ngModel)]="alumnoSeleccionado!.nombres"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Apellidos</label>
+            <input
+              type="text"
+              [(ngModel)]="alumnoSeleccionado!.apellidos"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Nivel</label>
+            <select
+              [(ngModel)]="alumnoSeleccionado!.nivel.id"
+              (ngModelChange)="actualizarGradosEdicion()"
+            >
+              <option [ngValue]="null" disabled>Seleccione nivel</option>
+              <option *ngFor="let n of niveles" [ngValue]="n.id">
+                {{ n.nombre }}
+              </option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Grado</label>
+            <select [(ngModel)]="alumnoSeleccionado!.grado">
+              <option value="" disabled>Seleccione grado</option>
+              <option *ngFor="let g of gradosEdicionDisponibles" [value]="g">
+                {{ g }}
+              </option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label>Sección</label>
+            <input
+              type="text"
+              [(ngModel)]="alumnoSeleccionado!.seccion"
+            />
+          </div>
+
+          <div class="input-group full-width">
+            <label>Estado</label>
+            <select [(ngModel)]="alumnoSeleccionado!.estado">
+              <option value="ACTIVO">Activo</option>
+              <option value="INACTIVO">Inactivo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-edit" *ngIf="alumnoSeleccionado?.padres?.length">
+        <h3>Datos del Padre / Madre</h3>
+
+        <div class="form-grid">
+          <div class="input-group">
+            <label>DNI Padre / Madre</label>
+            <input
+              type="text"
+              maxlength="8"
+              [(ngModel)]="alumnoSeleccionado!.padres[0].dni"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Nombres Padre / Madre</label>
+            <input
+              type="text"
+              [(ngModel)]="alumnoSeleccionado!.padres[0].nombres"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Apellidos Padre / Madre</label>
+            <input
+              type="text"
+              [(ngModel)]="alumnoSeleccionado!.padres[0].apellidos"
+            />
+          </div>
+
+          <div class="input-group">
+            <label>Teléfono</label>
+            <input
+              type="text"
+              maxlength="9"
+              [(ngModel)]="alumnoSeleccionado!.padres[0].telefono"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardarCambios()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal QR -->
+<div *ngIf="mostrarModalQr" class="modal-overlay">
+  <div class="modal-content qr-modal">
+    <div class="modal-header">
+      <h2>QR del Alumno</h2>
+      <button class="close-btn" (click)="cerrarModalQr()">✕</button>
+    </div>
+
+    <div class="modal-body qr-body">
+      <div id="zona-imprimir-qr" class="pdf-qr-content">
+        <h3>{{ alumnoQr?.nombres }} {{ alumnoQr?.apellidos }}</h3>
+        <p><strong>DNI:</strong> {{ alumnoQr?.dni }}</p>
+        <p><strong>Grado:</strong> {{ alumnoQr?.grado }}</p>
+        <p><strong>Sección:</strong> {{ alumnoQr?.seccion }}</p>
+        <p><strong>Nivel:</strong> {{ alumnoQr?.nivel?.nombre }}</p>
+
+        <div class="qr-box">
+          <qrcode
+            [qrdata]="qrSeleccionado"
+            [width]="220"
+            [errorCorrectionLevel]="'M'">
+          </qrcode>
+        </div>
+      </div>
+
+      <div class="acciones-qr-modal">
+        <button class="btn btn-primary" (click)="descargarQrPdf()">
+          Descargar PDF
+        </button>
+        <button class="btn btn-secondary" (click)="cerrarModalQr()">
+          Cerrar
+        </button>
+      </div>
+    </div>
   </div>
 </div>

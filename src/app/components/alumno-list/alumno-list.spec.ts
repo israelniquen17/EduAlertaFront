@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlumnoService, Alumno } from '../../app/alumno'
+import { AlumnoService, Alumno } from '../../app/services/alumno'
 
 @Component({
   selector: 'app-alumno-list',
@@ -16,9 +16,4 @@ export class AlumnoListComponent implements OnInit {
     this.alumnoService.obtenerAlumnos().subscribe(res => this.alumnos = res);
   }
 
-  verQr(codigoQr: string) {
-    this.alumnoService.obtenerQr(codigoQr).subscribe(blob => {
-      this.qrImg = URL.createObjectURL(blob);
-    });
   }
-}

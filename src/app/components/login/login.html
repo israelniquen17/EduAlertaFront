@@ -1,51 +1,74 @@
 <div class="login-container">
 
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
+
   <div class="login-card">
 
-    <!-- 🔥 LOGO -->
     <div class="logo-container">
       <img src="https://i.ibb.co/5xfZhxSv/KW.png" alt="Logo EduAlerta">
     </div>
 
-    <h2>Iniciar Sesión</h2>
+    <div class="login-header">
+      <h2>Iniciar Sesión</h2>
+      <p>Bienvenido a EduAlerta</p>
+    </div>
 
-    <form (ngSubmit)="login()" #loginForm="ngForm">
+    <form (ngSubmit)="login()" #loginForm="ngForm" novalidate>
 
       <!-- Usuario -->
       <div class="form-group">
-        <label>Usuario</label>
-        <input 
+        <label for="usuario">Usuario</label>
+        <input
+          id="usuario"
           type="text"
           [(ngModel)]="email"
           name="email"
           placeholder="Ingrese su usuario"
+          autocomplete="username"
           required
-          #emailInput="ngModel">
+          #emailInput="ngModel"
+        >
       </div>
 
       <!-- Contraseña -->
       <div class="form-group">
-        <label>Contraseña</label>
-        <input 
-          type="password"
-          [(ngModel)]="password"
-          name="password"
-          placeholder="********"
-          required
-          #passwordInput="ngModel">
+        <label for="password">Contraseña</label>
+
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="mostrarPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="Ingrese su contraseña"
+            autocomplete="current-password"
+            required
+            #passwordInput="ngModel"
+          >
+
+          <button
+            type="button"
+            class="toggle-password"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            [title]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+          >
+            <span *ngIf="!mostrarPassword">👁️</span>
+            <span *ngIf="mostrarPassword">🙈</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Botón -->
-      <button 
+      <button
+        class="login-button"
         type="submit"
-        [disabled]="loginForm.invalid || loading">
-        
+        [disabled]="loginForm.invalid || loading"
+      >
         <span *ngIf="!loading">Ingresar</span>
         <span *ngIf="loading">Cargando...</span>
-
       </button>
 
-      <!-- 🔴 Mensaje de error -->
       <div class="error-message" *ngIf="error">
         {{ error }}
       </div>

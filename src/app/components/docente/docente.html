@@ -1,71 +1,125 @@
-<div class="docente-container">
+<div class="docente-page">
+  <div class="docente-header">
+    <h2>Gestión de Docentes</h2>
+    <p>Administra docentes, su nivel, grado, sección y cursos asignados.</p>
+  </div>
 
-  <h2>Gestión de Docentes</h2>
+  <div class="docente-grid">
+    <div class="form-card">
+      <h3>{{ modoEdicion ? 'Editar docente' : 'Nuevo docente' }}</h3>
 
-  <form (ngSubmit)="guardarDocente()">
+      <form (ngSubmit)="guardarDocente()" class="docente-form">
+        <div class="form-row">
+          <label>DNI</label>
+          <input type="text" maxlength="8" [(ngModel)]="nuevoDocente.dni" name="dni" required>
+        </div>
 
-    <input type="text" placeholder="DNI" [(ngModel)]="nuevoDocente.dni" name="dni" required>
-    <input type="text" placeholder="Nombres" [(ngModel)]="nuevoDocente.nombres" name="nombres" required>
-    <input type="text" placeholder="Apellidos" [(ngModel)]="nuevoDocente.apellidos" name="apellidos" required>
-    <input type="text" placeholder="Grado" [(ngModel)]="nuevoDocente.grado" name="grado">
-    <input type="text" placeholder="Sección" [(ngModel)]="nuevoDocente.seccion" name="seccion">
+        <div class="form-row">
+          <label>Nombres</label>
+          <input type="text" [(ngModel)]="nuevoDocente.nombres" name="nombres" required>
+        </div>
 
-    <select [(ngModel)]="cursoSeleccionadoId" name="curso">
-      <option [ngValue]="null">Seleccione un curso</option>
-      <option *ngFor="let curso of cursos" [ngValue]="curso.id">
-        {{ curso.nombre }} - {{ curso.grado }} {{ curso.seccion }}
-      </option>
-    </select>
+        <div class="form-row">
+          <label>Apellidos</label>
+          <input type="text" [(ngModel)]="nuevoDocente.apellidos" name="apellidos" required>
+        </div>
 
-    <button type="submit">
-      {{ modoEdicion ? 'Actualizar' : 'Agregar' }}
-    </button>
+        <div class="form-row">
+          <label>Nivel</label>
+          <select [(ngModel)]="nuevoDocente.nivel" name="nivel" (ngModelChange)="actualizarGrados()" required>
+            <option [ngValue]="null">Seleccione nivel</option>
+            <option *ngFor="let n of niveles" [ngValue]="n">{{ n.nombre }}</option>
+          </select>
+        </div>
 
-    <button type="button" (click)="resetFormulario()">
-      Limpiar
-    </button>
+        <div class="form-row">
+          <label>Grado</label>
+          <select [(ngModel)]="nuevoDocente.grado" name="grado" (ngModelChange)="filtrarCursos()" required>
+            <option value="">Seleccione grado</option>
+            <option *ngFor="let g of gradosDisponibles" [value]="g">{{ g }}</option>
+          </select>
+        </div>
 
-  </form>
+        <div class="form-row">
+          <label>Sección</label>
+          <select [(ngModel)]="nuevoDocente.seccion" name="seccion" (ngModelChange)="filtrarCursos()" required>
+            <option value="">Seleccione sección</option>
+            <option *ngFor="let s of ['A','B','C','D']" [value]="s">{{ s }}</option>
+          </select>
+        </div>
 
-  <hr>
+        <div class="form-row">
+          <label>Asignar curso</label>
+          <select [(ngModel)]="cursoSeleccionadoId" name="curso">
+            <option [ngValue]="null">Seleccione curso</option>
+            <option *ngFor="let curso of cursosFiltrados" [ngValue]="curso.id">
+              {{ curso.nombre }} - {{ curso.nivel?.nombre }} - {{ curso.grado }} {{ curso.seccion }}
+            </option>
+          </select>
+        </div>
 
-  <table *ngIf="docentes.length > 0">
-    <thead>
-      <tr>
-        <th>DNI</th>
-        <th>Nombres</th>
-        <th>Apellidos</th>
-        <th>Grado</th>
-        <th>Sección</th>
-        <th>Cursos</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let docente of docentes">
-        <td>{{ docente.dni }}</td>
-        <td>{{ docente.nombres }}</td>
-        <td>{{ docente.apellidos }}</td>
-        <td>{{ docente.grado }}</td>
-        <td>{{ docente.seccion }}</td>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            {{ modoEdicion ? 'Actualizar docente' : 'Registrar docente' }}
+          </button>
+          <button type="button" class="btn-secondary" (click)="resetFormulario()">Limpiar</button>
+        </div>
 
-        <td>
-          <ul *ngIf="docente.cursos?.length">
-            <li *ngFor="let curso of docente.cursos">
-              {{ curso.nombre }} - {{ curso.grado }} {{ curso.seccion }}
-            </li>
-          </ul>
-          <span *ngIf="!docente.cursos?.length">Sin cursos</span>
-        </td>
+        <div *ngIf="mensajeError" class="alert alert-error">{{ mensajeError }}</div>
+        <div *ngIf="mensajeOk" class="alert alert-ok">{{ mensajeOk }}</div>
+      </form>
+    </div>
 
-        <td>
-          <button (click)="editarDocente(docente)">Editar</button>
-          <button (click)="eliminarDocente(docente.id)">Eliminar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <div class="table-card">
+      <h3>Lista de docentes</h3>
 
-  <p *ngIf="mensajeError" class="error">{{ mensajeError }}</p>
+      <div class="tabla-wrapper">
+        <table *ngIf="docentes.length > 0">
+          <thead>
+            <tr>
+              <th>DNI</th>
+              <th>Nombres</th>
+              <th>Apellidos</th>
+              <th>Nivel</th>
+              <th>Grado</th>
+              <th>Sección</th>
+              <th>Cursos</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let docente of docentes">
+              <td>{{ docente.dni }}</td>
+              <td>{{ docente.nombres }}</td>
+              <td>{{ docente.apellidos }}</td>
+              <td>{{ docente.nivel?.nombre }}</td>
+              <td>{{ docente.grado }}</td>
+              <td>{{ docente.seccion }}</td>
+              <td>
+                <div class="chips" *ngIf="docente.cursos?.length; else sinCursos">
+                  <span class="chip" *ngFor="let curso of docente.cursos">
+                    {{ curso.nombre }} - {{ curso.grado }} {{ curso.seccion }}
+                    <button class="chip-remove" (click)="quitarCurso(docente.id, curso.id)">x</button>
+                  </span>
+                </div>
+                <ng-template #sinCursos>
+                  <span class="muted">Sin cursos</span>
+                </ng-template>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button class="btn-edit" (click)="editarDocente(docente)">Editar</button>
+                  <button class="btn-delete" (click)="eliminarDocente(docente.id)">Eliminar</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
+        <div class="empty-state" *ngIf="docentes.length === 0">
+          No hay docentes registrados.
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -5,7 +5,7 @@
 
     <form class="form-grid">
 
-      <!--  DATOS DEL ALUMNO  -->
+      <!-- DATOS DEL ALUMNO -->
       <div class="section">
         <h3>Datos del Alumno</h3>
 
@@ -17,7 +17,7 @@
 
         <div class="grid-2">
 
-          <!--  NIVEL  -->
+          <!-- NIVEL -->
           <div>
             <label>Nivel</label>
             <select
@@ -44,7 +44,7 @@
             </select>
           </div>
 
-          <!--  SECCIÓN  -->
+          <!-- SECCIÓN -->
           <div>
             <label>Sección</label>
             <select [(ngModel)]="alumno.seccion" name="seccion" required>
@@ -76,7 +76,7 @@
     </form>
   </div>
 
-  <!--  Vista previa del QR  -->
+  <!-- Vista previa del QR -->
   <div class="qr-card" *ngIf="alumno.dni && !mostrarQrFinal">
     <h3>Vista previa del QR</h3>
 
@@ -87,7 +87,7 @@
     </qrcode>
   </div>
 
-  <!--  QR final  -->
+  <!-- QR final -->
   <div class="qr-card qr-final" *ngIf="mostrarQrFinal">
     <h3>QR generado correctamente</h3>
 
